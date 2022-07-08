@@ -1,0 +1,4 @@
+[config]
+process_list=["rms_creator"]
+process_input=["rms_DB_dir"]
+process_output=["rms_mon_dir"]
