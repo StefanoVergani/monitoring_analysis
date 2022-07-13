@@ -2,3 +2,4 @@
 process_list=["process_1", "process_2", "process_3"]
 process_input=["proc1_DB_dir", "proc2_DB_dir", "proc3_DB_dir"]
 process_output=["proc1_mon_dir", "proc2_mon_dir", "proc3_mon_dir"]
+process_config=["100,20,25", "Lisa needs braces", "Octopus,8"]

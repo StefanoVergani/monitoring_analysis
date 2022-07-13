@@ -29,22 +29,33 @@ class Process(multiprocess.Process):
             self._exception = self._pconn.recv()
         return self._exception
 
-def fun1(filename, outdir):
+def fun1(filename, outdir, configblock):
     print("FUN1:")
     print(filename)
     print(outdir)
+    fun1_config = configblock.split(',')
+    var_a = float(fun1_config[0])
+    var_b = float(fun1_config[1])
+    var_c = float(fun1_config[2])
+    print(var_a)
+    arithmetic_outcome = (var_a - var_b)*var_c
+    print("This should equal 2000: " + str(arithmetic_outcome))
 
-def fun2(filename, outdir):
+def fun2(filename, outdir, configblock):
     print("FUN2:")
     print(filename)
     print(outdir)
+    fun2_config = configblock.split(',')
+    print("Reading string: " + fun2_config[0])
 
-def fun3(filename, outdir):
+def fun3(filename, outdir, configblock):
     print("FUN3:")
     print (filename)
     print (outdir)
-    crashotron = 1/0
-    print (crashotron)
+    fun3_config = configblock.split(',')
+    print("An " + fun3_config[0] + " has " + fun3_config[1] + " legs")
+    #crashotron = 1/0
+    #print (crashotron)
 
 #def watch(dir):
 #    i = inotify.adapters.Inotify()
@@ -63,7 +74,7 @@ def fun3(filename, outdir):
 #        print("PATH=[{}] FILENAME=[{}] EVENT_TYPES={}".format(
 #              path, filename, type_names))
 
-def watch_and_process(process, indir, outdir):
+def watch_and_process(process, indir, outdir, config):
     i = inotify.adapters.Inotify()
 
     i.add_watch(indir)
@@ -74,7 +85,7 @@ def watch_and_process(process, indir, outdir):
         event_typename = "{}".format(type_names)
         
         if (event_typename == "['IN_MODIFY']"):
-          process(filename, outdir)
+          process(filename, outdir, config)
           #try:
           #  process(filename, outdir)
           #except:
@@ -91,21 +102,27 @@ if __name__ == '__main__':
     processes      = parser.get("config", "process_list")
     input_dirs     = parser.get("config", "process_input")
     output_dirs    = parser.get("config", "process_output")
+    config_blocks  = parser.get("config", "process_config")
 
     processes_list      = json.loads(processes)
     input_dirs_list     = json.loads(input_dirs)
     output_dirs_list    = json.loads(output_dirs)
+    config_blocks_list  = json.loads(config_blocks)
 
     print(processes_list)
     print(input_dirs_list)
     print(output_dirs_list)
+    print(config_blocks_list)
 
-    processDictionary = {"process_1": fun1, "process_2": fun2, "process_3": fun3, "rms_creator": AnalyserTools.rms_creator}
+    processDictionary = {"process_1": fun1, "process_2": fun2, "process_3": fun3}
     #activeProcessList = []
     for i, processKey in enumerate(processes_list):
       input_dir = input_dirs_list[i]
       output_dir = output_dirs_list[i]
-      proc = Process(target=watch_and_process, args=[processDictionary[processKey],input_dir,output_dir])
+      config_block = config_blocks_list[i]
+      print(config_block)
+
+      proc = Process(target=watch_and_process, args=[processDictionary[processKey],input_dir,output_dir,config_block])
       #activeProcessList.append(proc)
       proc.start()
       #time.sleep(1)
