@@ -6,7 +6,7 @@ import inotify.adapters
 import json
 import configparser
 from AnalyserTools import AnalyserTools
-import AnalyserFunctions
+from AnalyserFunctions import AnalyserFunctions
 
 class Process(multiprocess.Process):
 
