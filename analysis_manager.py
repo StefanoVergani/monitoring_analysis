@@ -6,6 +6,7 @@ import inotify.adapters
 import json
 import configparser
 from AnalyserTools import AnalyserTools
+import AnalyserFunctions
 
 class Process(multiprocess.Process):
 
@@ -33,18 +34,6 @@ def fun1(filename, outdir):
     print("FUN1:")
     print(filename)
     print(outdir)
-
-def fun2(filename, outdir):
-    print("FUN2:")
-    print(filename)
-    print(outdir)
-
-def fun3(filename, outdir):
-    print("FUN3:")
-    print (filename)
-    print (outdir)
-    crashotron = 1/0
-    print (crashotron)
 
 #def watch(dir):
 #    i = inotify.adapters.Inotify()
@@ -100,7 +89,7 @@ if __name__ == '__main__':
     print(input_dirs_list)
     print(output_dirs_list)
 
-    processDictionary = {"process_1": fun1, "process_2": fun2, "process_3": fun3, "rms_creator": AnalyserTools.rms_creator}
+    processDictionary = {"process_1": fun1, "alarm": AnalyserFunctions.alarm}
     #activeProcessList = []
     for i, processKey in enumerate(processes_list):
       input_dir = input_dirs_list[i]

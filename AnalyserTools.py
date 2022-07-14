@@ -2,6 +2,7 @@ import numpy as np
 import os
 import h5py as h5
 import pandas as pd
+import sys
 
 class AnalyserTools:
 
@@ -170,6 +171,14 @@ class AnalyserTools:
             faulty_array.append(temp)
         del temp
         #faulty_array = np.array(faulty_array)
+
+
+     #this function checks that your file exists
+    @staticmethod
+    def file_checker(your_file):
+        if(os.path.isfile(your_file)==False):
+            sys.exit("File ",file," not found!")
+
 
 
 

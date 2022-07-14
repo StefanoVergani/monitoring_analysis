@@ -1,4 +1,4 @@
 [config]
-process_list=["process_1", "process_2", "process_3"]
-process_input=["proc1_DB_dir", "proc2_DB_dir", "proc3_DB_dir"]
-process_output=["proc1_mon_dir", "proc2_mon_dir", "proc3_mon_dir"]
+process_list=["process_1", "alarm"]
+process_input=["/home/svergani/monitoring/hdf5_created_files"]
+process_output=["/home/svergani/monitoring/test_results"]
