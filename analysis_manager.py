@@ -75,7 +75,7 @@ def watch_and_process(process, indir, outdir):
 if __name__ == '__main__':
 
     parser = configparser.ConfigParser()
-    parser.read("sample_config.txt")
+    parser.read("analyser_config.txt")
     
     processes      = parser.get("config", "process_list")
     input_dirs     = parser.get("config", "process_input")
