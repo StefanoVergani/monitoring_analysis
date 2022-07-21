@@ -1,4 +1,4 @@
 [config]
-process_list=["process_1", "alarm"]
-process_input=["\home\svergani\monitoring\files"]
-process_output=["\home\svergani\test_file_production"]
+process_list=["process_1","alarm"]
+process_input=["\\home\\svergani\\monitoring\\files","\\home\\svergani\\monitoring\\files"]
+process_output=["\\home\\svergani\\test_file_production", "\\home\\svergani\\test_file_production"]

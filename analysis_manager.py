@@ -89,7 +89,7 @@ if __name__ == '__main__':
     print(input_dirs_list)
     print(output_dirs_list)
 
-    processDictionary = {"process_1": fun1, "alarm": AnalyserFunctions.alarm}
+    processDictionary = {"process_1": fun1, "alarm": AnalyserFunctions.test_function}
     #activeProcessList = []
     for i, processKey in enumerate(processes_list):
       input_dir = input_dirs_list[i]

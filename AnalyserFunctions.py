@@ -9,10 +9,23 @@ from matplotlib.ticker import MaxNLocator
 from AnalyserTools import AnalyserTools as ant
 
 class AnalyserFunctions:
+
+
+
+    #this is a test function
+
+    @staticmethod
+    def test_function(path_dir, path_dir_output):
+        print('path dir is ', path_dir)
+        print('path out is ', path_dir_output)
+
+
     #this function opens files containing the std and rms. If the rms for a given pixel is more than n std and this happens in two suqsequent
     #pixels, than it raises an alarm. It then assignes the value 1 to alarmed pixels and 0 to the others. It saves these values on a hdf5 files.
     @staticmethod
     def alarm(path_dir, path_dir_output):
+
+        print('test 1')
 
         ant.file_checker(os.sep.join([path_dir, "std_display_0_2022_05_22.hdf5"]))
         ant.file_checker(os.sep.join([path_dir, "std_display_1_2022_05_22.hdf5"]))
