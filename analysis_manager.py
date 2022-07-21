@@ -35,6 +35,15 @@ def fun1(filename, outdir):
     print(filename)
     print(outdir)
 
+def test_function(filename, outdir):
+    print('path dir is ', path_dir)
+    print('path out is ', path_dir_output)
+
+def fun2(filename, outdir):
+    print("FUN2:")
+    print(filename)
+    print(outdir)
+
 #def watch(dir):
 #    i = inotify.adapters.Inotify()
 #
@@ -89,12 +98,15 @@ if __name__ == '__main__':
     print(input_dirs_list)
     print(output_dirs_list)
 
-    processDictionary = {"process_1": fun1, "alarm": AnalyserFunctions.test_function}
+    processDictionary = {"process_1": fun1, "alarm": fun2}
     #activeProcessList = []
     for i, processKey in enumerate(processes_list):
+      print('hey')
       input_dir = input_dirs_list[i]
       output_dir = output_dirs_list[i]
+      print('hey 2')
       proc = Process(target=watch_and_process, args=[processDictionary[processKey],input_dir,output_dir])
+      print('hey 3')
       #activeProcessList.append(proc)
       proc.start()
       #time.sleep(1)
