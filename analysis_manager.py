@@ -22,6 +22,7 @@ class Process(multiprocess.Process):
         except Exception as e:
             tb = traceback.format_exc()
             self._cconn.send((e, tb))
+            print(tb)
             #raise e  # You can still rise this exception if you need to
 
     @property
@@ -32,6 +33,8 @@ class Process(multiprocess.Process):
 
 def fun1(filename, outdir):
     print("FUN1:")
+    #target_0 = h5.file("/home/svergani/monitoring/hdf5_created_files/std_display_0_2022_05_22.hdf5",r)
+    print("middle check")
     print(filename)
     print(outdir)
 
@@ -70,9 +73,12 @@ def watch_and_process(process, indir, outdir):
         (_, type_names, path, filename) = event
 
         event_typename = "{}".format(type_names)
-        
+
+      
+       ######things in this if means that the code gets triggered only if new files are introduced 
         if (event_typename == "['IN_MODIFY']"):
-          process(filename, outdir)
+            process(filename, outdir)
+
           #try:
           #  process(filename, outdir)
           #except:
@@ -98,18 +104,14 @@ if __name__ == '__main__':
     print(input_dirs_list)
     print(output_dirs_list)
 
-    processDictionary = {"process_1": fun1, "alarm": fun2}
+    processDictionary = {"process_1":fun1, "alarm": AnalyserFunctions.alarm}
     #activeProcessList = []
     for i, processKey in enumerate(processes_list):
-      print('hey')
       input_dir = input_dirs_list[i]
       output_dir = output_dirs_list[i]
-      print('hey 2')
-      proc = Process(target=watch_and_process, args=[processDictionary[processKey],input_dir,output_dir])
-      print('hey 3')
-      #activeProcessList.append(proc)
+      #proc = Process(target=watch_and_process, args=[processDictionary[processKey],input_dir,output_dir])
+      proc = Process(target=processDictionary[processKey], args=[input_dir,output_dir])
       proc.start()
-      #time.sleep(1)
 
     try:
       proc.join()

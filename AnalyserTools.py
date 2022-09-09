@@ -177,7 +177,8 @@ class AnalyserTools:
     @staticmethod
     def file_checker(your_file):
         if(os.path.isfile(your_file)==False):
-            sys.exit("File ",file," not found!")
+            print(your_file)
+            sys.exit("File not found!")
 
 
 

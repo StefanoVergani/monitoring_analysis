@@ -25,8 +25,9 @@ class AnalyserFunctions:
     @staticmethod
     def alarm(path_dir, path_dir_output):
 
-        print('test 1')
-
+        path_dir = path_dir.replace("//","/")
+        path_dir_output = path_dir_output.replace("//","/")
+    
         ant.file_checker(os.sep.join([path_dir, "std_display_0_2022_05_22.hdf5"]))
         ant.file_checker(os.sep.join([path_dir, "std_display_1_2022_05_22.hdf5"]))
         ant.file_checker(os.sep.join([path_dir, "std_display_2_2022_05_22.hdf5"]))
@@ -35,8 +36,6 @@ class AnalyserFunctions:
         ant.file_checker(os.sep.join([path_dir, "rms_display_2_2022_05_22.hdf5"]))
         ant.file_checker(os.sep.join([path_dir, "baselines_2022_05_22.hdf5"]))
 
-        print("successfully opened the files")
-
         target_0 = h5.File(os.sep.join([path_dir, "std_display_0_2022_05_22.hdf5"]), 'r')
         target_1 = h5.File(os.sep.join([path_dir, "std_display_1_2022_05_22.hdf5"]), 'r')
         target_2 = h5.File(os.sep.join([path_dir, "std_display_2_2022_05_22.hdf5"]), 'r')
@@ -44,6 +43,8 @@ class AnalyserFunctions:
         target_1_rms = h5.File(os.sep.join([path_dir, "rms_display_1_2022_05_22.hdf5"]), 'r')
         target_2_rms = h5.File(os.sep.join([path_dir, "rms_display_2_2022_05_22.hdf5"]), 'r')
         baselines = h5.File(os.sep.join([path_dir, "baselines_2022_05_22.hdf5"]), 'r')
+
+        print("files has been opened")
 
         #std over time from file
         std_0 = np.array(target_0.get('std_display_0').value)
@@ -54,9 +55,9 @@ class AnalyserFunctions:
         rms_1 = np.array(target_1_rms.get('rms_display_1').value)
         rms_2 = np.array(target_2_rms.get('rms_display_2').value)
         #channel numbers from file
-        channels_0 = np.array(target_0.get('channels').value)
-        channels_1 = np.array(target_1.get('channels').value)
-        channels_2 = np.array(target_2.get('channels').value)
+        channels_0 = np.array(target_0.get('channels_0').value)
+        channels_1 = np.array(target_1.get('channels_1').value)
+        channels_2 = np.array(target_2.get('channels_2').value)
         #std baselines per channel
         bl_0_std_array = np.array(baselines.get('mean_std_display_0').value)
         bl_1_std_array = np.array(baselines.get('mean_std_display_1').value)
