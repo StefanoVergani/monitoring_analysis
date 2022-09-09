@@ -180,6 +180,11 @@ class AnalyserTools:
             print(your_file)
             sys.exit("File not found!")
 
+    #this function convertes the name of the input/outfolder from double slashes to single slashes
+    @staticmethod
+    def slash_converter(your_file):
+        your_file = your_file.replace("//","/")
+
 
 
 

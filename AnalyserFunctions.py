@@ -25,8 +25,8 @@ class AnalyserFunctions:
     @staticmethod
     def alarm(path_dir, path_dir_output):
 
-        path_dir = path_dir.replace("//","/")
-        path_dir_output = path_dir_output.replace("//","/")
+        ant.slash_converter(path_dir)
+        ant.slash_converter(path_dir_output)
     
         ant.file_checker(os.sep.join([path_dir, "std_display_0_2022_05_22.hdf5"]))
         ant.file_checker(os.sep.join([path_dir, "std_display_1_2022_05_22.hdf5"]))
