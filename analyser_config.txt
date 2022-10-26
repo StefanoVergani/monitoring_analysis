@@ -1,4 +1,5 @@
 [config]
-process_list=["process_1","alarm"]
-process_input=["//home//svergani//monitoring//files","//home//svergani//monitoring//hdf5_created_files"]
-process_output=["//home//svergani//monitoring//test_results","//home//svergani//monitoring//test_results"]
+process_prefix=["none","std,rms","none","none"]
+process_list=["process_1","triggers_producer","baseline_calculator","time_files_producer"]
+process_input=["//home//svergani//monitoring//files","//home//svergani//monitoring//files_3_2//try","//home//svergani//monitoring//files_3_2//try_baseline","//home//svergani//monitoring//files_3_2//try_pre_baseline"]
+process_output=["//home//svergani//monitoring//test_results","//home//svergani//monitoring//test_results","//home//svergani//monitoring//test_results//benchmarks","//home//svergani//monitoring//files_3_2//try_baseline"]

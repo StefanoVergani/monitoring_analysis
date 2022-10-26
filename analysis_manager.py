@@ -64,20 +64,26 @@ def fun2(filename, outdir):
 #        print("PATH=[{}] FILENAME=[{}] EVENT_TYPES={}".format(
 #              path, filename, type_names))
 
-def watch_and_process(process, indir, outdir):
+def watch_and_process(process, indir, outdir, cache_file, cache_data):
     i = inotify.adapters.Inotify()
 
     i.add_watch(indir)
+
+    counter=0
 
     for event in i.event_gen(yield_nones=False):
         (_, type_names, path, filename) = event
 
         event_typename = "{}".format(type_names)
 
-      
        ######things in this if means that the code gets triggered only if new files are introduced 
+        #if not cache_data:
+        #    print("CHACHE IS EMPTY!") 
         if (event_typename == "['IN_MODIFY']"):
-            process(filename, outdir)
+            counter = counter +1
+            process(indir, outdir, cache_file, cache_data, filename)
+            #if counter==3:
+            #    process(indir, outdir, cache, filename)
 
           #try:
           #  process(filename, outdir)
@@ -95,22 +101,40 @@ if __name__ == '__main__':
     processes      = parser.get("config", "process_list")
     input_dirs     = parser.get("config", "process_input")
     output_dirs    = parser.get("config", "process_output")
+    prefixes       = parser.get("config", "process_prefix")
 
     processes_list      = json.loads(processes)
     input_dirs_list     = json.loads(input_dirs)
     output_dirs_list    = json.loads(output_dirs)
+    prefixes_list       = json.loads(prefixes)
 
     print(processes_list)
     print(input_dirs_list)
     print(output_dirs_list)
+    print(prefixes_list)
 
-    processDictionary = {"process_1":fun1, "alarm": AnalyserFunctions.alarm}
+    processDictionary = {"process_1":fun1, "triggers_producer": AnalyserFunctions.triggers_producer,"baseline_calculator":AnalyserFunctions.baseline_calculator,"time_files_producer":AnalyserFunctions.time_files_producer}
     #activeProcessList = []
+    
+   
+
     for i, processKey in enumerate(processes_list):
+      cache_file = []
+      cache_data = [] 
       input_dir = input_dirs_list[i]
       output_dir = output_dirs_list[i]
-      #proc = Process(target=watch_and_process, args=[processDictionary[processKey],input_dir,output_dir])
-      proc = Process(target=processDictionary[processKey], args=[input_dir,output_dir])
+      process_prefix = prefixes_list[i]
+      proc = Process(target=watch_and_process, args=[processDictionary[processKey],input_dir,output_dir,cache_file,cache_data])
+      #prefix_dump_list=s.split(',')
+      #int green_light = 0
+      #for j in range(prefix_dump_list.size()):
+      #    if(if prefix_dump_list[j] in filename):
+      #        green_light = 1
+
+      #proc = Process(target=processDictionary[processKey], args=[input_dir, output_dir, cache])
+
+      #if(green_light==1):
+      #    proc.start()
       proc.start()
 
     try:
@@ -119,6 +143,7 @@ if __name__ == '__main__':
         raise proc.exception
     except Exception as e:
       print( "Exception caught!" )
+
 
     #try:
     #  proc.join()

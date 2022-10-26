@@ -4,6 +4,8 @@ import h5py as h5
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+from datetime import datetime
+#from tables import *
 from mpl_toolkits import mplot3d
 from matplotlib.ticker import MaxNLocator
 from AnalyserTools import AnalyserTools as ant
@@ -34,7 +36,7 @@ class AnalyserFunctions:
         ant.file_checker(os.sep.join([path_dir, "rms_display_0_2022_05_22.hdf5"]))
         ant.file_checker(os.sep.join([path_dir, "rms_display_1_2022_05_22.hdf5"]))
         ant.file_checker(os.sep.join([path_dir, "rms_display_2_2022_05_22.hdf5"]))
-        ant.file_checker(os.sep.join([path_dir, "baselines_2022_05_22.hdf5"]))
+        ant.file_checker(os.sep.join([path_dir_output, "benchmarks/baselines_2022_05_22.hdf5"]))
 
         target_0 = h5.File(os.sep.join([path_dir, "std_display_0_2022_05_22.hdf5"]), 'r')
         target_1 = h5.File(os.sep.join([path_dir, "std_display_1_2022_05_22.hdf5"]), 'r')
@@ -42,7 +44,7 @@ class AnalyserFunctions:
         target_0_rms = h5.File(os.sep.join([path_dir, "rms_display_0_2022_05_22.hdf5"]), 'r')
         target_1_rms = h5.File(os.sep.join([path_dir, "rms_display_1_2022_05_22.hdf5"]), 'r')
         target_2_rms = h5.File(os.sep.join([path_dir, "rms_display_2_2022_05_22.hdf5"]), 'r')
-        baselines = h5.File(os.sep.join([path_dir, "baselines_2022_05_22.hdf5"]), 'r')
+        baselines = h5.File(os.sep.join([path_dir_output, "benchmarks/baselines_2022_05_22.hdf5"]), 'r')
 
         print("files has been opened")
 
@@ -142,23 +144,180 @@ class AnalyserFunctions:
         alarm_file.create_dataset('faulty_sigma_2', data=faulty_sigma_2)
         alarm_file.close()
 
-    def baseline_calculator(path_dir, path_dir_output):
+    #this function opens one file containing the std and one the rms, and it takes only the latest elements. If the rms for a given pixel is more than n std and this happens in two suqsequent
+    #pixels, than it raises an alarm. It then assignes the value 1 to alarmed pixels and 0 to the others. It saves these values on a hdf5 files.
+    @staticmethod
+    def triggers_producer(path_dir, path_dir_output, cache_file, cache_data, filename):
 
-        ant.file_checker(os.sep.join([path_dir, "std_display_0_2022_05_22.hdf5"]))
-        ant.file_checker(os.sep.join([path_dir, "std_display_1_2022_05_22.hdf5"]))
-        ant.file_checker(os.sep.join([path_dir, "std_display_2_2022_05_22.hdf5"]))
-        ant.file_checker(os.sep.join([path_dir, "rms_display_0_2022_05_22.hdf5"]))
-        ant.file_checker(os.sep.join([path_dir, "rms_display_1_2022_05_22.hdf5"]))
-        ant.file_checker(os.sep.join([path_dir, "rms_display_2_2022_05_22.hdf5"]))
+        cache_file.append(filename)
+        print('len(cache_file) ',len(cache_file))
+        print('cache_file ',cache_file)
+        if(len(cache_file)<3):
+            return 17
+        
+        cache_file.clear()
 
-        print("successfully opened the files")
+        ant.slash_converter(path_dir)
+        ant.slash_converter(path_dir_output)
 
-        bl_0 = h5.File(os.sep.join([path_dir_baseline, "std_display_0_2022_05_22.hdf5"]), 'r')
-        bl_1 = h5.File(os.sep.join([path_dir_baseline, "std_display_1_2022_05_22.hdf5"]), 'r')
-        bl_2 = h5.File(os.sep.join([path_dir_baseline, "std_display_2_2022_05_22.hdf5"]), 'r')
-        bl_0_rms = h5.File(os.sep.join([path_dir_baseline, "rms_display_0_2022_05_22.hdf5"]), 'r')
-        bl_1_rms = h5.File(os.sep.join([path_dir_baseline, "rms_display_1_2022_05_22.hdf5"]), 'r')
-        bl_2_rms = h5.File(os.sep.join([path_dir_baseline, "rms_display_2_2022_05_22.hdf5"]), 'r')
+        target_0_rms_name=ant.file_looper(path_dir, "rms-0")
+        target_1_rms_name=ant.file_looper(path_dir, "rms-1")
+        target_2_rms_name=ant.file_looper(path_dir, "rms-2")
+        baselines_name = ant.file_looper(path_dir_output, "benchmarks/baselines_")
+
+        print('Trigger: ',filename,' ',target_0_rms_name)
+        print('Trigger: ',filename,' ',target_1_rms_name)
+        print('Trigger: ',filename,' ',target_2_rms_name)
+        print('Baseline: ',baselines_name)
+
+        #here I am checking that those files exist
+        ant.file_checker(os.sep.join([path_dir, target_0_rms_name]))
+        ant.file_checker(os.sep.join([path_dir, target_1_rms_name]))
+        ant.file_checker(os.sep.join([path_dir, target_2_rms_name]))
+        ant.file_checker(os.sep.join([path_dir_output, baselines_name]))
+        #here I am opening the files and writing a confirmation message
+        target_0_rms = h5.File(os.sep.join([path_dir, target_0_rms_name]), 'r')
+        target_1_rms = h5.File(os.sep.join([path_dir, target_1_rms_name]), 'r')
+        target_2_rms = h5.File(os.sep.join([path_dir, target_2_rms_name]), 'r')
+        baselines = h5.File(os.sep.join([path_dir_output, baselines_name]), 'r')
+
+        print(filename,' ',"files have been opened")
+
+        channels_0 = np.array(target_0_rms.get('data/axis0').value)
+        channels_1 = np.array(target_1_rms.get('data/axis0').value)
+        channels_2 = np.array(target_2_rms.get('data/axis0').value)
+
+        rms_0=np.array(ant.std_extractor((os.sep.join([path_dir, target_0_rms_name])),channels_0))
+        rms_1=np.array(ant.std_extractor((os.sep.join([path_dir, target_1_rms_name])),channels_1))
+        rms_2=np.array(ant.std_extractor((os.sep.join([path_dir, target_2_rms_name])),channels_2))
+
+        #std baselines per channel
+        bl_0_std_array = np.array(baselines.get('mean_std_display_0').value)
+        bl_1_std_array = np.array(baselines.get('mean_std_display_1').value)
+        bl_2_std_array = np.array(baselines.get('mean_std_display_2').value)
+        #rms baselines per channel
+        bl_0_rms_array = np.array(baselines.get('mean_rms_display_0').value)
+        bl_1_rms_array = np.array(baselines.get('mean_rms_display_1').value)
+        bl_2_rms_array = np.array(baselines.get('mean_rms_display_2').value)
+        #channel numbers from baselines
+        channels_bl_0 = baselines.get('channels_bl_0').value
+        channels_bl_1 = baselines.get('channels_bl_1').value
+        channels_bl_2 = baselines.get('channels_bl_2').value
+
+        #each baseline file must have the same number of channel of the file you are checking
+        #if not, it means you are comparing the wrong display and it will raise an error
+
+        equal_arrays_0 = (channels_0 == channels_bl_0).all()
+        equal_arrays_1 = (channels_1 == channels_bl_1).all()
+        equal_arrays_2 = (channels_2 == channels_bl_2).all()
+
+        if(equal_arrays_0==True and equal_arrays_1==True and equal_arrays_2==True):
+            print("The displays you are using have the same structures of the baselines. all good!")
+        else:
+            print("Error! you are not using the right baseline!")
+            if(equal_arrays_0==False):
+                print("Display 0 is wrong!")
+            if(equal_arrays_1==False):
+               print("Display 1 is wrong!")
+            if(equal_arrays_2==False):
+                print("Display 2 is wrong!")
+
+        how_many_std = 2
+
+        triggers_0 = []
+        triggers_1 = []
+        triggers_2 = []
+        triggers_0 = np.array(ant.triggering_pixel_finder(rms_0, bl_0_rms_array, bl_0_std_array, channels_0,how_many_std))
+        triggers_1 = np.array(ant.triggering_pixel_finder(rms_1, bl_1_rms_array, bl_1_std_array, channels_1,how_many_std))
+        triggers_2 = np.array(ant.triggering_pixel_finder(rms_2, bl_2_rms_array, bl_2_std_array, channels_2,how_many_std))
+
+
+        #I create a matrix following the official structure: array with display numbers, array with channel numbers, matrix size (1)
+
+        triggers_matrix = []
+        triggers_matrix = ant.structured_matrix_1D(triggers_0,triggers_1,triggers_2)
+
+        if not cache_data:
+            cache_data.append(triggers_matrix)        
+        else:
+            cache_data.clear()
+            cache_data.append(triggers_matrix)
+ 
+
+
+
+
+        
+
+
+        #it loops over the output folder to see whether a "open_triggers" file already exists.
+        #if yes, it looks for the latest one (you should have only one). if not, it creates a new name with the current timestamp
+        #just_opened = 0
+        #file_needs_to_be_closed = 0
+        #element = 0
+        #if(ant.file_looper(path_dir_output, "open_triggers")!=None):
+        #    latest_file_name=ant.file_looper(path_dir_output, "open_triggers")
+        #else:
+        #     from datetime import datetime
+        #     str(datetime.now())
+        #     latest_file_name="open_triggers_"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"
+        #     just_opened = 1
+
+        ##if the file is not newly created, it checks that the pixels stored are less than 1000. ATTENTION HERE PIXELS NOT CHANNELS!
+        ##if yes, change the name into closed_triggers and create new file later on
+        #if(just_opened==0):
+        #    triggering_file = h5.File(os.sep.join([path_dir_output, latest_file_name]), 'r')
+        #    temp = np.array(triggering_file.get('triggers_0').value)
+
+        #    if(len(triggering_file.get('triggers_0').value)>1000):
+        #        triggering_file.close()
+        #        new_file_name = "closed" + latest_file_name[4:]
+        #        os.rename(os.sep.join([path_dir_output, latest_file_name]), os.sep.join([path_dir_output, new_file_name]))
+        #        file_needs_to_be_closed = 1
+        #    else:
+        #        triggering_file.close()
+
+        ##fill the old file or create a new one
+        #if(file_needs_to_be_closed == 0):
+        #    triggering_file = h5.File(os.sep.join([path_dir_output, latest_file_name]), 'a')
+        #else:
+        #    latest_file_name="open_triggers_"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"
+        #    triggering_file = h5.File(os.sep.join([path_dir_output, latest_file_name]), 'w')
+
+        #triggering_file.create_dataset('triggers_0', data=triggers_0)
+        #triggering_file.create_dataset('triggers_1', data=triggers_1)
+        #triggering_file.create_dataset('triggers_2', data=triggers_2)
+        #triggering_file.close()
+         
+
+
+    def baseline_calculator(path_dir, path_dir_output, cache_file, cache_data, filename):
+
+        ant.slash_converter(path_dir)
+        ant.slash_converter(path_dir_output)
+        
+        baseline_value_file_name=ant.file_looper(path_dir,"baseline_values_")
+        print('baseline_value_file_name ',baseline_value_file_name)
+
+        ant.file_checker(os.sep.join([path_dir, baseline_value_file_name]))
+        
+        print("os.sep.join([path_dir, baseline_value_file_name]) ",os.sep.join([path_dir, baseline_value_file_name]))
+
+        bl_file = h5.File(os.sep.join([path_dir, baseline_value_file_name]), 'r')
+
+        #here some issues with trigger
+
+        std_bl_0 = np.array(bl_file.get('std_0').value)
+        std_bl_1 = np.array(bl_file.get('std_1').value)
+        std_bl_2 = np.array(bl_file.get('std_2').value)
+        rms_bl_0 = np.array(bl_file.get('rms_0').value)
+        rms_bl_1 = np.array(bl_file.get('rms_1').value)
+        rms_bl_2 = np.array(bl_file.get('rms_2').value)
+        channels_bl_0 = np.array(bl_file.get('channels_0').value)
+        channels_bl_1 = np.array(bl_file.get('channels_1').value)
+        channels_bl_2 = np.array(bl_file.get('channels_2').value)
+
+        print('std_bl_0.shape ',std_bl_0.shape)
 
         #now we evaluate the baseline for each channel and the baseline for each display
         #at this stage, it is just a lazy mean but later on I can do something more fancy is required
@@ -199,9 +358,9 @@ class AnalyserFunctions:
         total_rms_mean_1 = np.mean(mean_rms_display_1)
         total_rms_mean_2 = np.mean(mean_rms_display_2)
 
-        #now I store the baseline values as hdf5 files
+        #now I store the baseline values as hdf5 file
 
-        hf_target = h5.File(os.sep.join([path_dir_output, "baselines_2022_05_22.hdf5"]), 'w')
+        hf_target = h5.File(os.sep.join([path_dir_output, "benchmarks/baselines_"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"]), 'w')
 
         hf_target.create_dataset('mean_std_display_0', data=mean_std_display_0)
         hf_target.create_dataset('mean_std_display_1', data=mean_std_display_1)
@@ -220,6 +379,45 @@ class AnalyserFunctions:
         hf_target.create_dataset('channels_bl_2', data=channels_bl_2)
 
         hf_target.close()
+
+
+
+    def time_files_producer(path_dir, path_dir_output, cache_file, cache_data, filename):
+         
+        ant.slash_converter(path_dir)
+        ant.slash_converter(path_dir_output)
+        ####super lazy way to extract the channels, it will be soon changed
+        path_dir_0: str = r"/home/svergani/monitoring/files/rmsm_display_0/"
+        path_dir_1: str = r"/home/svergani/monitoring/files/rmsm_display_1/"
+        path_dir_2: str = r"/home/svergani/monitoring/files/rmsm_display_2/"
+
+        f_0 = h5.File(os.sep.join([path_dir_0, "rmsm_display-0-220525-151538.hdf5"]), "r")
+        channels_0 = np.array(f_0.get('data/axis0').value)
+        f_1 = h5.File(os.sep.join([path_dir_1, "rmsm_display-1-220525-151538.hdf5"]), "r")
+        channels_1 = np.array(f_1.get('data/axis0').value)
+        f_2 = h5.File(os.sep.join([path_dir_2, "rmsm_display-2-220525-151538.hdf5"]), "r")
+        channels_2 = np.array(f_2.get('data/axis0').value)
+        ####################################################################
+        #I should add some checks that the same amount of std and rms files are received before getting triggered
+        std_0 = np.array(ant.time_file_creator(path_dir,channels_0,"std-0"))
+        std_1 = np.array(ant.time_file_creator(path_dir,channels_1,"std-1"))
+        std_2 = np.array(ant.time_file_creator(path_dir,channels_2,"std-2"))
+        rms_0 = np.array(ant.time_file_creator(path_dir,channels_0,"rms-0"))
+        rms_1 = np.array(ant.time_file_creator(path_dir,channels_0,"rms-0"))
+        rms_2 = np.array(ant.time_file_creator(path_dir,channels_0,"rms-0"))
+        #creating hdf5 containing all these pieces of information
+        hf_target = h5.File(os.sep.join([path_dir_output, "baseline_values_"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"]), 'w')
+        hf_target.create_dataset('channels_0', data=channels_0)
+        hf_target.create_dataset('channels_1', data=channels_1)
+        hf_target.create_dataset('channels_2', data=channels_2)
+        hf_target.create_dataset('std_0', data=std_0)
+        hf_target.create_dataset('std_1', data=std_1)
+        hf_target.create_dataset('std_2', data=std_2)
+        hf_target.create_dataset('rms_0', data=rms_0)
+        hf_target.create_dataset('rms_1', data=rms_1)
+        hf_target.create_dataset('rms_2', data=rms_2)  
+        hf_target.close()      
+
         
 
 
