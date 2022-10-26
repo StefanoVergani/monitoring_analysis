@@ -1,4 +1,0 @@
-[config]
-process_list=["process_1", "alarm"]
-process_input=["/home/svergani/monitoring/hdf5_created_files"]
-process_output=["/home/svergani/monitoring/test_results"]
