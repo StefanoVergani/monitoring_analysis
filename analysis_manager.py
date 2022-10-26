@@ -113,7 +113,7 @@ if __name__ == '__main__':
     print(output_dirs_list)
     print(prefixes_list)
 
-    processDictionary = {"process_1":fun1, "triggers_producer": AnalyserFunctions.triggers_producer,"baseline_calculator":AnalyserFunctions.baseline_calculator,"time_files_producer":AnalyserFunctions.time_files_producer}
+    processDictionary = {"process_1":fun1, "triggers_producer": AnalyserFunctions.triggers_producer}
     #activeProcessList = []
     
    
