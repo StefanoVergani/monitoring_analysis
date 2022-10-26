@@ -61,5 +61,92 @@ class BenchmarkFunctions:
         hf_target.create_dataset('rms_1', data=rms_1)
         hf_target.create_dataset('rms_2', data=rms_2)  
         hf_target.close() 
+    
+    @staticmethod
+    def baseline_calculator(path_dir, path_dir_output):
         
+        baseline_value_file_name=ant.file_looper(path_dir,"baseline_values_")
+        print('baseline_value_file_name ',baseline_value_file_name)
+
+        ant.file_checker(os.sep.join([path_dir, baseline_value_file_name]))
+        
+        print("os.sep.join([path_dir, baseline_value_file_name]) ",os.sep.join([path_dir, baseline_value_file_name]))
+
+        bl_file = h5.File(os.sep.join([path_dir, baseline_value_file_name]), 'r')
+
+        #here some issues with trigger
+
+        std_bl_0 = np.array(bl_file.get('std_0').value)
+        std_bl_1 = np.array(bl_file.get('std_1').value)
+        std_bl_2 = np.array(bl_file.get('std_2').value)
+        rms_bl_0 = np.array(bl_file.get('rms_0').value)
+        rms_bl_1 = np.array(bl_file.get('rms_1').value)
+        rms_bl_2 = np.array(bl_file.get('rms_2').value)
+        channels_bl_0 = np.array(bl_file.get('channels_0').value)
+        channels_bl_1 = np.array(bl_file.get('channels_1').value)
+        channels_bl_2 = np.array(bl_file.get('channels_2').value)
+
+        print('std_bl_0.shape ',std_bl_0.shape)
+
+        #now we evaluate the baseline for each channel and the baseline for each display
+        #at this stage, it is just a lazy mean but later on I can do something more fancy is required
+
+        mean_std_display_0 = []
+        mean_std_display_1 = []
+        mean_std_display_2 = []
+        mean_rms_display_0 = []
+        mean_rms_display_1 = []
+        mean_rms_display_2 = []
+
+        for i in range(std_bl_0.shape[1]):
+            mean_std_display_0.append(np.mean(std_bl_0[:,i]))
+            mean_rms_display_0.append(np.mean(rms_bl_0[:,i]))
+    
+        for i in range(std_bl_1.shape[1]):
+            mean_std_display_1.append(np.mean(std_bl_1[:,i]))
+            mean_rms_display_1.append(np.mean(rms_bl_1[:,i]))
+    
+        for i in range(std_bl_2.shape[1]):
+            mean_std_display_2.append(np.mean(std_bl_2[:,i]))
+            mean_rms_display_2.append(np.mean(rms_bl_2[:,i]))
+    
+        mean_std_display_0 = np.array(mean_std_display_0)
+        mean_std_display_1 = np.array(mean_std_display_1)
+        mean_std_display_2 = np.array(mean_std_display_2)
+        mean_rms_display_0 = np.array(mean_rms_display_0)
+        mean_rms_display_1 = np.array(mean_rms_display_1)
+        mean_rms_display_2 = np.array(mean_rms_display_2)
+        #now let's do a mean of all the mean arrays inside a display
+        #that is basically the average value of the entire display
+        #it is not the smartest way and it will be changed, but for now I use this
+
+        total_std_mean_0 = np.mean(mean_std_display_0)
+        total_std_mean_1 = np.mean(mean_std_display_1)
+        total_std_mean_2 = np.mean(mean_std_display_2)
+        total_rms_mean_0 = np.mean(mean_rms_display_0)
+        total_rms_mean_1 = np.mean(mean_rms_display_1)
+        total_rms_mean_2 = np.mean(mean_rms_display_2)
+
+        #now I store the baseline values as hdf5 file
+
+        hf_target = h5.File(os.sep.join([path_dir_output, "baselines_"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"]), 'w')
+
+        hf_target.create_dataset('mean_std_display_0', data=mean_std_display_0)
+        hf_target.create_dataset('mean_std_display_1', data=mean_std_display_1)
+        hf_target.create_dataset('mean_std_display_2', data=mean_std_display_2)
+        hf_target.create_dataset('total_std_mean_0', data=total_std_mean_0)
+        hf_target.create_dataset('total_std_mean_1', data=total_std_mean_1)
+        hf_target.create_dataset('total_std_mean_2', data=total_std_mean_2)
+        hf_target.create_dataset('mean_rms_display_0', data=mean_rms_display_0)
+        hf_target.create_dataset('mean_rms_display_1', data=mean_rms_display_1)
+        hf_target.create_dataset('mean_rms_display_2', data=mean_rms_display_2)
+        hf_target.create_dataset('total_rms_mean_0', data=total_rms_mean_0)
+        hf_target.create_dataset('total_rms_mean_1', data=total_rms_mean_1)
+        hf_target.create_dataset('total_rms_mean_2', data=total_rms_mean_2)
+        hf_target.create_dataset('channels_bl_0', data=channels_bl_0)
+        hf_target.create_dataset('channels_bl_1', data=channels_bl_1)
+        hf_target.create_dataset('channels_bl_2', data=channels_bl_2)
+
+        hf_target.close()
+
         
