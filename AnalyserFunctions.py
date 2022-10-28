@@ -256,18 +256,16 @@ class AnalyserFunctions:
             if(ant.file_looper(path_dir_output, "alarms_")!=None):
                 filename_alarm=ant.file_looper(path_dir_output, "alarms_")
                 f = h5.File(os.sep.join([path_dir_output, filename_alarm]), "r")
-                pixel_0 = []
-                pixel_1 = []
-                pixel_2 = []
                 pixel_0 = f.get('alarm_pixel_0').value
                 pixel_1 = f.get('alarm_pixel_1').value
                 pixel_2 = f.get('alarm_pixel_2').value
                 f.close()
-                pixel_0.append(alarm_pixel_0)
-                pixel_1.append(alarm_pixel_1)
-                pixel_2.append(alarm_pixel_2)
+                np.append(pixel_0,alarm_pixel_0,0)
+                np.append(pixel_0,alarm_pixel_0,0)
+                np.append(pixel_0,alarm_pixel_0,0)
+                print("pixel_0.shape ",pixel_0.shape)
                 os.remove(os.sep.join([path_dir_output, filename_alarm]))
-                if(len(pixel_0<9)):
+                if(len(pixel_0)<9):
                     f_1 = h5.File(os.sep.join([path_dir_output, filename_alarm]), "w")
                     f_1.create_dataset('alarm_pixel_0', data=pixel_0)
                     f_1.create_dataset('alarm_pixel_1', data=pixel_1)
