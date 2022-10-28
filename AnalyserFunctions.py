@@ -163,7 +163,7 @@ class AnalyserFunctions:
         target_0_rms_name=ant.file_looper(path_dir, "rms-0")
         target_1_rms_name=ant.file_looper(path_dir, "rms-1")
         target_2_rms_name=ant.file_looper(path_dir, "rms-2")
-        baselines_name = ant.file_looper(path_dir_output, "benchmarks/baselines_")
+        baselines_name = ant.file_looper(path_dir_output, "baselines_")
 
         print('Trigger: ',filename,' ',target_0_rms_name)
         print('Trigger: ',filename,' ',target_1_rms_name)
@@ -227,9 +227,9 @@ class AnalyserFunctions:
         triggers_0 = []
         triggers_1 = []
         triggers_2 = []
-        triggers_0 = np.array(ant.triggering_pixel_finder(rms_0, bl_0_rms_array, bl_0_std_array, channels_0,how_many_std))
-        triggers_1 = np.array(ant.triggering_pixel_finder(rms_1, bl_1_rms_array, bl_1_std_array, channels_1,how_many_std))
-        triggers_2 = np.array(ant.triggering_pixel_finder(rms_2, bl_2_rms_array, bl_2_std_array, channels_2,how_many_std))
+        triggers_0 = ant.triggering_pixel_finder(rms_0, bl_0_rms_array, bl_0_std_array, channels_0,how_many_std)
+        triggers_1 = ant.triggering_pixel_finder(rms_1, bl_1_rms_array, bl_1_std_array, channels_1,how_many_std)
+        triggers_2 = ant.triggering_pixel_finder(rms_2, bl_2_rms_array, bl_2_std_array, channels_2,how_many_std)
 
 
         #I create a matrix following the official structure: array with display numbers, array with channel numbers, matrix size (1)
@@ -254,7 +254,7 @@ class AnalyserFunctions:
           #now it looks inside the path_dir_output folder for the latest hdf5 file. If it is called open, it means there is still    
             #space.
             if(ant.file_looper(path_dir_output, "alarms_")!=None):
-                filename_alarm=ant.file_looper(path_dir_output, "alarms")
+                filename_alarm=ant.file_looper(path_dir_output, "alarms_")
                 f = h5.File(os.sep.join([path_dir_output, filename_alarm]), "r")
                 pixel_0 = []
                 pixel_1 = []
@@ -277,7 +277,7 @@ class AnalyserFunctions:
                     f_1.create_dataset('channels_2',data=channels_2)
                     f_1.close()
                 else:
-                    f_2 = h5.File(os.sep.join([path_dir_output, "alarms"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"]), 'w')
+                    f_2 = h5.File(os.sep.join([path_dir_output, "alarms_"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"]), 'w')
                     f_2.create_dataset('alarm_pixel_0', data=pixel_0)
                     f_2.create_dataset('alarm_pixel_1', data=pixel_1)
                     f_2.create_dataset('alarm_pixel_2', data=pixel_2)
@@ -286,7 +286,7 @@ class AnalyserFunctions:
                     f_2.create_dataset('channels_2',data=channels_2)
                     f_2.close()
             else:
-                f_3 = h5.File(os.sep.join([path_dir_output, "alarms"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"]), 'w')
+                f_3 = h5.File(os.sep.join([path_dir_output, "alarms_"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"]), 'w')
                 f_3.create_dataset('alarm_pixel_0', data=alarm_pixel_0)
                 f_3.create_dataset('alarm_pixel_1', data=alarm_pixel_1)
                 f_3.create_dataset('alarm_pixel_2', data=alarm_pixel_2)

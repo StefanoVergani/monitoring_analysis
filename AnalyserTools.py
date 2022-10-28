@@ -298,22 +298,28 @@ class AnalyserTools:
     
     @staticmethod
     def alarm_creator(array_1, array_2, channel_0, channel_1, channel_2):
-        temp = []
+        temp_0 = []
+        temp_1 = []
+        temp_2 = []
         for i in range(len(channel_0)):
-            if (array_1[0][i]==0.1 and array_2[0][i]==0.1):
-                temp[0][i].append(1)
+            if (array_1[0][0][i]==0.1 and array_2[0][i]==0.1):
+                temp_0.append(1)
             else:
-                temp[0][i].append(0.1)
+                temp_0.append(0.1)
         for j in range(len(channel_1)):
-            if (array_1[1][j]==0.1 and array_2[1][j]==0.1):
-                temp[1][j].append(1)
+            if (array_1[0][1][j]==0.1 and array_2[1][j]==0.1):
+                temp_1.append(1)
             else:
-                temp[1][j].append(0.1)
+                temp_1.append(0.1)
         for k in range(len(channel_2)):
-            if (array_1[2][k]==0.1 and array_2[2][k]==0.1):
-                temp[2][k].append(1)
+            if (array_1[0][2][k]==0.1 and array_2[2][k]==0.1):
+                temp_2.append(1)
             else:
-                temp[2][k].append(0.1)
+                temp_2.append(0.1)
+        temp = []
+        temp.append(temp_0)
+        temp.append(temp_1)
+        temp.append(temp_2)
         return temp
           
             
