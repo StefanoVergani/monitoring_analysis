@@ -249,49 +249,58 @@ class AnalyserFunctions:
             alarm_pixel_0 = alarm_pixel[0]
             alarm_pixel_1 = alarm_pixel[1]
             alarm_pixel_2 = alarm_pixel[2]
+            #now it creates a hdf5 file containing the alarms
+            f_2 = h5.File(os.sep.join([path_dir_output, "alarms_"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"]), 'w')
+            f_2.create_dataset('alarm_pixel_0', data=alarm_pixel_0)
+            f_2.create_dataset('alarm_pixel_1', data=alarm_pixel_1)
+            f_2.create_dataset('alarm_pixel_2', data=alarm_pixel_2)
+            f_2.create_dataset('channels_0',data=channels_0)
+            f_2.create_dataset('channels_1',data=channels_1)
+            f_2.create_dataset('channels_2',data=channels_2)
+            f_2.close()
             
             
           #now it looks inside the path_dir_output folder for the latest hdf5 file. If it is called open, it means there is still    
             #space.
-            if(ant.file_looper(path_dir_output, "alarms_")!=None):
-                filename_alarm=ant.file_looper(path_dir_output, "alarms_")
-                f = h5.File(os.sep.join([path_dir_output, filename_alarm]), "r")
-                pixel_0 = f.get('alarm_pixel_0').value
-                pixel_1 = f.get('alarm_pixel_1').value
-                pixel_2 = f.get('alarm_pixel_2').value
-                f.close()
-                np.append(pixel_0,alarm_pixel_0,0)
-                np.append(pixel_1,alarm_pixel_1,0)
-                np.append(pixel_2,alarm_pixel_2,0)
-                print("pixel_0.shape ",pixel_0.shape)
-                os.remove(os.sep.join([path_dir_output, filename_alarm]))
-                if((pixel_0.shape)<9):
-                    f_1 = h5.File(os.sep.join([path_dir_output, filename_alarm]), "w")
-                    f_1.create_dataset('alarm_pixel_0', data=pixel_0)
-                    f_1.create_dataset('alarm_pixel_1', data=pixel_1)
-                    f_1.create_dataset('alarm_pixel_2', data=pixel_2)
-                    f_1.create_dataset('channels_0',data=channels_0)
-                    f_1.create_dataset('channels_1',data=channels_1)
-                    f_1.create_dataset('channels_2',data=channels_2)
-                    f_1.close()
-                else:
-                    f_2 = h5.File(os.sep.join([path_dir_output, "alarms_"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"]), 'w')
-                    f_2.create_dataset('alarm_pixel_0', data=pixel_0)
-                    f_2.create_dataset('alarm_pixel_1', data=pixel_1)
-                    f_2.create_dataset('alarm_pixel_2', data=pixel_2)
-                    f_2.create_dataset('channels_0',data=channels_0)
-                    f_2.create_dataset('channels_1',data=channels_1)
-                    f_2.create_dataset('channels_2',data=channels_2)
-                    f_2.close()
-            else:
-                f_3 = h5.File(os.sep.join([path_dir_output, "alarms_"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"]), 'w')
-                f_3.create_dataset('alarm_pixel_0', data=alarm_pixel_0)
-                f_3.create_dataset('alarm_pixel_1', data=alarm_pixel_1)
-                f_3.create_dataset('alarm_pixel_2', data=alarm_pixel_2)
-                f_3.create_dataset('channels_0',data=channels_0)
-                f_3.create_dataset('channels_1',data=channels_1)
-                f_3.create_dataset('channels_2',data=channels_2)
-                f_3.close()
+            #if(ant.file_looper(path_dir_output, "alarms_")!=None):
+            #    filename_alarm=ant.file_looper(path_dir_output, "alarms_")
+            #    f = h5.File(os.sep.join([path_dir_output, filename_alarm]), "r")
+            #    pixel_0 = f.get('alarm_pixel_0').value
+            #    pixel_1 = f.get('alarm_pixel_1').value
+            #    pixel_2 = f.get('alarm_pixel_2').value
+            #    f.close()
+            #    np.append(pixel_0,alarm_pixel_0,0)
+            #    np.append(pixel_1,alarm_pixel_1,0)
+            #    np.append(pixel_2,alarm_pixel_2,0)
+            #    print("pixel_0.shape ",pixel_0.shape)
+            #    os.remove(os.sep.join([path_dir_output, filename_alarm]))
+            #    if((pixel_0.shape)<9):
+            #        f_1 = h5.File(os.sep.join([path_dir_output, filename_alarm]), "w")
+            #        f_1.create_dataset('alarm_pixel_0', data=pixel_0)
+            #        f_1.create_dataset('alarm_pixel_1', data=pixel_1)
+            #        f_1.create_dataset('alarm_pixel_2', data=pixel_2)
+            #        f_1.create_dataset('channels_0',data=channels_0)
+            #        f_1.create_dataset('channels_1',data=channels_1)
+            #        f_1.create_dataset('channels_2',data=channels_2)
+            #        f_1.close()
+            #    else:
+            #        f_2 = h5.File(os.sep.join([path_dir_output, "alarms_"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"]), 'w')
+            #        f_2.create_dataset('alarm_pixel_0', data=pixel_0)
+            #        f_2.create_dataset('alarm_pixel_1', data=pixel_1)
+            #        f_2.create_dataset('alarm_pixel_2', data=pixel_2)
+            #        f_2.create_dataset('channels_0',data=channels_0)
+            #        f_2.create_dataset('channels_1',data=channels_1)
+            #        f_2.create_dataset('channels_2',data=channels_2)
+            #        f_2.close()
+            #else:
+            #    f_3 = h5.File(os.sep.join([path_dir_output, "alarms_"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"]), 'w')
+            #    f_3.create_dataset('alarm_pixel_0', data=alarm_pixel_0)
+            #    f_3.create_dataset('alarm_pixel_1', data=alarm_pixel_1)
+            #    f_3.create_dataset('alarm_pixel_2', data=alarm_pixel_2)
+            #    f_3.create_dataset('channels_0',data=channels_0)
+            #    f_3.create_dataset('channels_1',data=channels_1)
+            #    f_3.create_dataset('channels_2',data=channels_2)
+            #    f_3.close()
                 
                 
                 #1)reduce amount of hdf5 file -> do it using memory
