@@ -152,7 +152,7 @@ class AnalyserFunctions:
         cache_file.append(filename)
         print('len(cache_file) ',len(cache_file))
         print('cache_file ',cache_file)
-        if(len(cache_file)<3):
+        if(len(cache_file)<6):
             return 17
         
         cache_file.clear()
