@@ -287,13 +287,13 @@ class AnalyserFunctions:
                     f_2.close()
             else:
                 f_3 = h5.File(os.sep.join([path_dir_output, "alarms"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"]), 'w')
-                    f_3.create_dataset('alarm_pixel_0', data=alarm_pixel_0)
-                    f_3.create_dataset('alarm_pixel_1', data=alarm_pixel_1)
-                    f_3.create_dataset('alarm_pixel_2', data=alarm_pixel_2)
-                    f_3.create_dataset('channels_0',data=channels_0)
-                    f_3.create_dataset('channels_1',data=channels_1)
-                    f_3.create_dataset('channels_2',data=channels_2)
-                    f_3.close()
+                f_3.create_dataset('alarm_pixel_0', data=alarm_pixel_0)
+                f_3.create_dataset('alarm_pixel_1', data=alarm_pixel_1)
+                f_3.create_dataset('alarm_pixel_2', data=alarm_pixel_2)
+                f_3.create_dataset('channels_0',data=channels_0)
+                f_3.create_dataset('channels_1',data=channels_1)
+                f_3.create_dataset('channels_2',data=channels_2)
+                f_3.close()
                 
                     
                 
