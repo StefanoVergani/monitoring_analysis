@@ -261,11 +261,11 @@ class AnalyserFunctions:
                 pixel_2 = f.get('alarm_pixel_2').value
                 f.close()
                 np.append(pixel_0,alarm_pixel_0,0)
-                np.append(pixel_0,alarm_pixel_0,0)
-                np.append(pixel_0,alarm_pixel_0,0)
+                np.append(pixel_1,alarm_pixel_1,0)
+                np.append(pixel_2,alarm_pixel_2,0)
                 print("pixel_0.shape ",pixel_0.shape)
                 os.remove(os.sep.join([path_dir_output, filename_alarm]))
-                if(len(pixel_0)<9):
+                if((pixel_0.shape)<9):
                     f_1 = h5.File(os.sep.join([path_dir_output, filename_alarm]), "w")
                     f_1.create_dataset('alarm_pixel_0', data=pixel_0)
                     f_1.create_dataset('alarm_pixel_1', data=pixel_1)
@@ -293,19 +293,11 @@ class AnalyserFunctions:
                 f_3.create_dataset('channels_2',data=channels_2)
                 f_3.close()
                 
-                    
                 
-                    
-                    
-                
- 
+                #1)reduce amount of hdf5 file -> do it using memory
+                #2)make alarm more flexible, loop over parameterised length of cache
 
-
-
-
-        
-
-
+    
         #it loops over the output folder to see whether a "open_triggers" file already exists.
         #if yes, it looks for the latest one (you should have only one). if not, it creates a new name with the current timestamp
         #just_opened = 0

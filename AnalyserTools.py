@@ -302,17 +302,17 @@ class AnalyserTools:
         temp_1 = []
         temp_2 = []
         for i in range(len(channel_0)):
-            if (array_1[0][0][i]==0.1 and array_2[0][i]==0.1):
+            if (array_1[0][0][i]==1 and array_2[0][i]==1):
                 temp_0.append(1)
             else:
                 temp_0.append(0.1)
         for j in range(len(channel_1)):
-            if (array_1[0][1][j]==0.1 and array_2[1][j]==0.1):
+            if (array_1[0][1][j]==1 and array_2[1][j]==1):
                 temp_1.append(1)
             else:
                 temp_1.append(0.1)
         for k in range(len(channel_2)):
-            if (array_1[0][2][k]==0.1 and array_2[2][k]==0.1):
+            if (array_1[0][2][k]==1 and array_2[2][k]==1):
                 temp_2.append(1)
             else:
                 temp_2.append(0.1)
