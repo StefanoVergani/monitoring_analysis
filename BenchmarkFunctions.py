@@ -37,11 +37,11 @@ class BenchmarkFunctions:
         target_2_rms_name = ant.file_looper(path_dir, "rms-2")
         
         f_0 = h5.File(os.sep.join([path_dir, target_0_rms_name]), "r")
-        channels_0 = np.array(f_0.get('data/axis0').value)
+        channels_0 = np.array(f_0.get('data/axis0')[()])
         f_1 = h5.File(os.sep.join([path_dir, target_1_rms_name]), "r")
-        channels_1 = np.array(f_1.get('data/axis0').value)
+        channels_1 = np.array(f_1.get('data/axis0')[()])
         f_2 = h5.File(os.sep.join([path_dir, target_2_rms_name]), "r")
-        channels_2 = np.array(f_2.get('data/axis0').value)
+        channels_2 = np.array(f_2.get('data/axis0')[()])
         #########################
         std_0 = np.array(ant.time_file_creator_bis(path_dir,target_0_std_name_array,channels_0))
         std_1 = np.array(ant.time_file_creator_bis(path_dir,target_1_std_name_array,channels_1))
@@ -76,15 +76,15 @@ class BenchmarkFunctions:
 
         #here some issues with trigger
 
-        std_bl_0 = np.array(bl_file.get('std_0').value)
-        std_bl_1 = np.array(bl_file.get('std_1').value)
-        std_bl_2 = np.array(bl_file.get('std_2').value)
-        rms_bl_0 = np.array(bl_file.get('rms_0').value)
-        rms_bl_1 = np.array(bl_file.get('rms_1').value)
-        rms_bl_2 = np.array(bl_file.get('rms_2').value)
-        channels_bl_0 = np.array(bl_file.get('channels_0').value)
-        channels_bl_1 = np.array(bl_file.get('channels_1').value)
-        channels_bl_2 = np.array(bl_file.get('channels_2').value)
+        std_bl_0 = np.array(bl_file.get('std_0')[()])
+        std_bl_1 = np.array(bl_file.get('std_1')[()])
+        std_bl_2 = np.array(bl_file.get('std_2')[()])
+        rms_bl_0 = np.array(bl_file.get('rms_0')[()])
+        rms_bl_1 = np.array(bl_file.get('rms_1')[()])
+        rms_bl_2 = np.array(bl_file.get('rms_2')[()])
+        channels_bl_0 = np.array(bl_file.get('channels_0')[()])
+        channels_bl_1 = np.array(bl_file.get('channels_1')[()])
+        channels_bl_2 = np.array(bl_file.get('channels_2')[()])
 
         print('std_bl_0.shape ',std_bl_0.shape)
 

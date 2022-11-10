@@ -1,0 +1,8 @@
+[config]
+process_list=["test_process"]
+process_input=["//home//pip//DQM_Analysis_Package//testDB//input_files"]
+process_output=["//home//pip//DQM_Analysis_Package//testDB//output_files//test1"]
+process_prefixes=[["std-0","std-1","std-2"]]
+process_accept=[3.0]
+process_interval=[10.0]
+process_custom=[["some ", "BODY ", "once ", "told ", "me..."]]

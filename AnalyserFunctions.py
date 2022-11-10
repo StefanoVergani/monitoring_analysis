@@ -147,62 +147,81 @@ class AnalyserFunctions:
     #this function opens one file containing the std and one the rms, and it takes only the latest elements. If the rms for a given pixel is more than n std and this happens in two suqsequent
     #pixels, than it raises an alarm. It then assignes the value 1 to alarmed pixels and 0 to the others. It saves these values on a hdf5 files.
     @staticmethod
-    def triggers_producer(path_dir, path_dir_output, cache_file, cache_data, filename):
+    def triggers_producer(inputs, path_dir, path_dir_output, cache_data, custom_config):
+    #def triggers_producer(path_dir, path_dir_output, cache_file, cache_data, filename):
 
-        cache_file.append(filename)
-        print('len(cache_file) ',len(cache_file))
-        print('cache_file ',cache_file)
-        if(len(cache_file)<6):
-            return 17
-        
-        cache_file.clear()
+        benchmark_dir = "/home/pip/DQM_Analysis_Package/testDB/benchmark_files"
 
-        ant.slash_converter(path_dir)
-        ant.slash_converter(path_dir_output)
+        #OBSOLETE - assembler handles this now
+        #-----------------------------------------------
+        #cache_file.append(filename)
+        #print('len(cache_file) ',len(cache_file))
+        #print('cache_file ',cache_file)
+        #if(len(cache_file)<6):
+        #    return 17
+        #
+        #cache_file.clear()
 
-        target_0_rms_name=ant.file_looper(path_dir, "rms-0")
-        target_1_rms_name=ant.file_looper(path_dir, "rms-1")
-        target_2_rms_name=ant.file_looper(path_dir, "rms-2")
-        baselines_name = ant.file_looper(path_dir_output, "baselines_")
+        #ant.slash_converter(path_dir)
+        #ant.slash_converter(path_dir_output)
 
-        print('Trigger: ',filename,' ',target_0_rms_name)
-        print('Trigger: ',filename,' ',target_1_rms_name)
-        print('Trigger: ',filename,' ',target_2_rms_name)
+        #target_0_rms_name=ant.file_looper(path_dir, "rms-0")
+        #target_1_rms_name=ant.file_looper(path_dir, "rms-1")
+        #target_2_rms_name=ant.file_looper(path_dir, "rms-2")
+        #baselines_name = ant.file_looper(path_dir_output, "baselines_")
+        #---------------------------------------------------------------
+
+        print("Inputs:")
+        print(inputs)
+        print("inputs[0]:")
+        print(inputs[0])
+        print("inputs[0][0]:")
+        print(inputs[0][0])
+        target_0_rms_name = inputs[0][0][0]
+        target_1_rms_name = inputs[0][1][0]
+        target_2_rms_name = inputs[0][2][0]
+        baselines_name = ant.file_looper(benchmark_dir, "baselines_")
+
+        #print('Trigger: ',filename,' ',target_0_rms_name)
+        #print('Trigger: ',filename,' ',target_1_rms_name)
+        #print('Trigger: ',filename,' ',target_2_rms_name)
         print('Baseline: ',baselines_name)
 
         #here I am checking that those files exist
         ant.file_checker(os.sep.join([path_dir, target_0_rms_name]))
         ant.file_checker(os.sep.join([path_dir, target_1_rms_name]))
         ant.file_checker(os.sep.join([path_dir, target_2_rms_name]))
-        ant.file_checker(os.sep.join([path_dir_output, baselines_name]))
+        #ant.file_checker(os.sep.join([path_dir_output, baselines_name]))
+        ant.file_checker(os.sep.join([benchmark_dir, baselines_name]))
         #here I am opening the files and writing a confirmation message
         target_0_rms = h5.File(os.sep.join([path_dir, target_0_rms_name]), 'r')
         target_1_rms = h5.File(os.sep.join([path_dir, target_1_rms_name]), 'r')
         target_2_rms = h5.File(os.sep.join([path_dir, target_2_rms_name]), 'r')
-        baselines = h5.File(os.sep.join([path_dir_output, baselines_name]), 'r')
+        #baselines = h5.File(os.sep.join([path_dir_output, baselines_name]), 'r')
+        baselines = h5.File(os.sep.join([benchmark_dir, baselines_name]), 'r')
 
-        print(filename,' ',"files have been opened")
+        #print(filename,' ',"files have been opened")
 
-        channels_0 = np.array(target_0_rms.get('data/axis0').value)
-        channels_1 = np.array(target_1_rms.get('data/axis0').value)
-        channels_2 = np.array(target_2_rms.get('data/axis0').value)
+        channels_0 = np.array(target_0_rms.get('data/axis0')[()])
+        channels_1 = np.array(target_1_rms.get('data/axis0')[()])
+        channels_2 = np.array(target_2_rms.get('data/axis0')[()])
 
         rms_0=np.array(ant.std_extractor((os.sep.join([path_dir, target_0_rms_name])),channels_0))
         rms_1=np.array(ant.std_extractor((os.sep.join([path_dir, target_1_rms_name])),channels_1))
         rms_2=np.array(ant.std_extractor((os.sep.join([path_dir, target_2_rms_name])),channels_2))
 
         #std baselines per channel
-        bl_0_std_array = np.array(baselines.get('mean_std_display_0').value)
-        bl_1_std_array = np.array(baselines.get('mean_std_display_1').value)
-        bl_2_std_array = np.array(baselines.get('mean_std_display_2').value)
+        bl_0_std_array = np.array(baselines.get('mean_std_display_0')[()])
+        bl_1_std_array = np.array(baselines.get('mean_std_display_1')[()])
+        bl_2_std_array = np.array(baselines.get('mean_std_display_2')[()])
         #rms baselines per channel
-        bl_0_rms_array = np.array(baselines.get('mean_rms_display_0').value)
-        bl_1_rms_array = np.array(baselines.get('mean_rms_display_1').value)
-        bl_2_rms_array = np.array(baselines.get('mean_rms_display_2').value)
+        bl_0_rms_array = np.array(baselines.get('mean_rms_display_0')[()])
+        bl_1_rms_array = np.array(baselines.get('mean_rms_display_1')[()])
+        bl_2_rms_array = np.array(baselines.get('mean_rms_display_2')[()])
         #channel numbers from baselines
-        channels_bl_0 = baselines.get('channels_bl_0').value
-        channels_bl_1 = baselines.get('channels_bl_1').value
-        channels_bl_2 = baselines.get('channels_bl_2').value
+        channels_bl_0 = baselines.get('channels_bl_0')[()]
+        channels_bl_1 = baselines.get('channels_bl_1')[()]
+        channels_bl_2 = baselines.get('channels_bl_2')[()]
 
         #each baseline file must have the same number of channel of the file you are checking
         #if not, it means you are comparing the wrong display and it will raise an error
@@ -232,24 +251,29 @@ class AnalyserFunctions:
         triggers_2 = ant.triggering_pixel_finder(rms_2, bl_2_rms_array, bl_2_std_array, channels_2,how_many_std)
 
 
+        print("checkpoint A")
         #I create a matrix following the official structure: array with display numbers, array with channel numbers, matrix size (1)
 
         triggers_matrix = []
         triggers_matrix = ant.structured_matrix_1D(triggers_0,triggers_1,triggers_2)
 
         if not cache_data:
+            print("checkpoint B")
             cache_data.append(triggers_matrix)
         else:
+            print("checkpoint C")
             triggers_matrix_before = []
             triggers_matrix_before = cache_data
-            cache_data.clear()
+            #cache_data.clear()
+            cache_data[:] = []
             cache_data.append(triggers_matrix)
             alarm_pixel = []
-            alarm_pixel = ant.alarm_creator(triggers_matrix_before,triggers_matrix,target_0_rms.get('data/axis0').value,target_1_rms.get('data/axis0').value,target_2_rms.get('data/axis0').value)
+            alarm_pixel = ant.alarm_creator(triggers_matrix_before,triggers_matrix,target_0_rms.get('data/axis0')[()],target_1_rms.get('data/axis0')[()],target_2_rms.get('data/axis0')[()])
             alarm_pixel_0 = alarm_pixel[0]
             alarm_pixel_1 = alarm_pixel[1]
             alarm_pixel_2 = alarm_pixel[2]
             #now it creates a hdf5 file containing the alarms
+            print(path_dir_output)
             f_2 = h5.File(os.sep.join([path_dir_output, "alarms_"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"]), 'w')
             f_2.create_dataset('alarm_pixel_0', data=alarm_pixel_0)
             f_2.create_dataset('alarm_pixel_1', data=alarm_pixel_1)
@@ -417,7 +441,8 @@ class AnalyserFunctions:
 
         #now I store the baseline values as hdf5 file
 
-        hf_target = h5.File(os.sep.join([path_dir_output, "benchmarks/baselines_"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"]), 'w')
+        #hf_target = h5.File(os.sep.join([path_dir_output, "benchmarks/baselines_"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"]), 'w')
+        hf_target = h5.File(os.sep.join([path_dir_output, benchmark_dir+"baselines_"+"{:%Y_%m_%d_%H    _%M_%S}".format(datetime.now())+".hdf5"]), 'w')
 
         hf_target.create_dataset('mean_std_display_0', data=mean_std_display_0)
         hf_target.create_dataset('mean_std_display_1', data=mean_std_display_1)
@@ -444,9 +469,12 @@ class AnalyserFunctions:
         ant.slash_converter(path_dir)
         ant.slash_converter(path_dir_output)
         ####super lazy way to extract the channels, it will be soon changed
-        path_dir_0: str = r"/home/svergani/monitoring/files/rmsm_display_0/"
-        path_dir_1: str = r"/home/svergani/monitoring/files/rmsm_display_1/"
-        path_dir_2: str = r"/home/svergani/monitoring/files/rmsm_display_2/"
+        #path_dir_0: str = r"/home/svergani/monitoring/files/rmsm_display_0/"
+        #path_dir_1: str = r"/home/svergani/monitoring/files/rmsm_display_1/"
+        #path_dir_2: str = r"/home/svergani/monitoring/files/rmsm_display_2/"
+        path_dir_0: str = r"/home/pip/DQM_Analysis_Package/testDB/input_files/"
+        path_dir_1: str = r"/home/pip/DQM_Analysis_Package/testDB/input_files/"
+        path_dir_2: str = r"/home/pip/DQM_Analysis_Package/testDB/input_files/"
 
         f_0 = h5.File(os.sep.join([path_dir_0, "rmsm_display-0-220525-151538.hdf5"]), "r")
         channels_0 = np.array(f_0.get('data/axis0').value)
