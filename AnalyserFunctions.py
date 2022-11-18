@@ -151,7 +151,7 @@ class AnalyserFunctions:
     #def triggers_producer(path_dir, path_dir_output, cache_file, cache_data, filename):
 
         #benchmark_dir = "/home/pip/DQM_Analysis_Package/testDB/benchmark_files"
-        benchmark_dir = path_dir_out+"benchmark_files"
+        benchmark_dir = path_dir_output + "//benchmark_files"
 
         #OBSOLETE - assembler handles this now
         #-----------------------------------------------
