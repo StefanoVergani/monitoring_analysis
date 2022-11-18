@@ -150,7 +150,8 @@ class AnalyserFunctions:
     def triggers_producer(inputs, path_dir, path_dir_output, cache_data, custom_config):
     #def triggers_producer(path_dir, path_dir_output, cache_file, cache_data, filename):
 
-        benchmark_dir = "/home/pip/DQM_Analysis_Package/testDB/benchmark_files"
+        #benchmark_dir = "/home/pip/DQM_Analysis_Package/testDB/benchmark_files"
+        benchmark_dir = path_dir_out+"benchmark_files"
 
         #OBSOLETE - assembler handles this now
         #-----------------------------------------------
@@ -283,92 +284,7 @@ class AnalyserFunctions:
             f_2.create_dataset('channels_2',data=channels_2)
             f_2.close()
             
-            
-          #now it looks inside the path_dir_output folder for the latest hdf5 file. If it is called open, it means there is still    
-            #space.
-            #if(ant.file_looper(path_dir_output, "alarms_")!=None):
-            #    filename_alarm=ant.file_looper(path_dir_output, "alarms_")
-            #    f = h5.File(os.sep.join([path_dir_output, filename_alarm]), "r")
-            #    pixel_0 = f.get('alarm_pixel_0').value
-            #    pixel_1 = f.get('alarm_pixel_1').value
-            #    pixel_2 = f.get('alarm_pixel_2').value
-            #    f.close()
-            #    np.append(pixel_0,alarm_pixel_0,0)
-            #    np.append(pixel_1,alarm_pixel_1,0)
-            #    np.append(pixel_2,alarm_pixel_2,0)
-            #    print("pixel_0.shape ",pixel_0.shape)
-            #    os.remove(os.sep.join([path_dir_output, filename_alarm]))
-            #    if((pixel_0.shape)<9):
-            #        f_1 = h5.File(os.sep.join([path_dir_output, filename_alarm]), "w")
-            #        f_1.create_dataset('alarm_pixel_0', data=pixel_0)
-            #        f_1.create_dataset('alarm_pixel_1', data=pixel_1)
-            #        f_1.create_dataset('alarm_pixel_2', data=pixel_2)
-            #        f_1.create_dataset('channels_0',data=channels_0)
-            #        f_1.create_dataset('channels_1',data=channels_1)
-            #        f_1.create_dataset('channels_2',data=channels_2)
-            #        f_1.close()
-            #    else:
-            #        f_2 = h5.File(os.sep.join([path_dir_output, "alarms_"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"]), 'w')
-            #        f_2.create_dataset('alarm_pixel_0', data=pixel_0)
-            #        f_2.create_dataset('alarm_pixel_1', data=pixel_1)
-            #        f_2.create_dataset('alarm_pixel_2', data=pixel_2)
-            #        f_2.create_dataset('channels_0',data=channels_0)
-            #        f_2.create_dataset('channels_1',data=channels_1)
-            #        f_2.create_dataset('channels_2',data=channels_2)
-            #        f_2.close()
-            #else:
-            #    f_3 = h5.File(os.sep.join([path_dir_output, "alarms_"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"]), 'w')
-            #    f_3.create_dataset('alarm_pixel_0', data=alarm_pixel_0)
-            #    f_3.create_dataset('alarm_pixel_1', data=alarm_pixel_1)
-            #    f_3.create_dataset('alarm_pixel_2', data=alarm_pixel_2)
-            #    f_3.create_dataset('channels_0',data=channels_0)
-            #    f_3.create_dataset('channels_1',data=channels_1)
-            #    f_3.create_dataset('channels_2',data=channels_2)
-            #    f_3.close()
-                
-                
-                #1)reduce amount of hdf5 file -> do it using memory
-                #2)make alarm more flexible, loop over parameterised length of cache
-
-    
-        #it loops over the output folder to see whether a "open_triggers" file already exists.
-        #if yes, it looks for the latest one (you should have only one). if not, it creates a new name with the current timestamp
-        #just_opened = 0
-        #file_needs_to_be_closed = 0
-        #element = 0
-        #if(ant.file_looper(path_dir_output, "open_triggers")!=None):
-        #    latest_file_name=ant.file_looper(path_dir_output, "open_triggers")
-        #else:
-        #     from datetime import datetime
-        #     str(datetime.now())
-        #     latest_file_name="open_triggers_"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"
-        #     just_opened = 1
-
-        ##if the file is not newly created, it checks that the pixels stored are less than 1000. ATTENTION HERE PIXELS NOT CHANNELS!
-        ##if yes, change the name into closed_triggers and create new file later on
-        #if(just_opened==0):
-        #    triggering_file = h5.File(os.sep.join([path_dir_output, latest_file_name]), 'r')
-        #    temp = np.array(triggering_file.get('triggers_0').value)
-
-        #    if(len(triggering_file.get('triggers_0').value)>1000):
-        #        triggering_file.close()
-        #        new_file_name = "closed" + latest_file_name[4:]
-        #        os.rename(os.sep.join([path_dir_output, latest_file_name]), os.sep.join([path_dir_output, new_file_name]))
-        #        file_needs_to_be_closed = 1
-        #    else:
-        #        triggering_file.close()
-
-        ##fill the old file or create a new one
-        #if(file_needs_to_be_closed == 0):
-        #    triggering_file = h5.File(os.sep.join([path_dir_output, latest_file_name]), 'a')
-        #else:
-        #    latest_file_name="open_triggers_"+"{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())+".hdf5"
-        #    triggering_file = h5.File(os.sep.join([path_dir_output, latest_file_name]), 'w')
-
-        #triggering_file.create_dataset('triggers_0', data=triggers_0)
-        #triggering_file.create_dataset('triggers_1', data=triggers_1)
-        #triggering_file.create_dataset('triggers_2', data=triggers_2)
-        #triggering_file.close()
+           
          
 
 
